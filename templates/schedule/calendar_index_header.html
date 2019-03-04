@@ -1,0 +1,57 @@
+{% load static %}
+<nav class="navbar navbar-expand-md navbar-dark bg-secondary" role="navigation">
+    <!-- Brand and toggle get grouped for better mobile display -->
+
+    <a class="navbar-brand" href="#">AlertYo </a>
+
+    <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2" id="bs-example-navbar-collapse-1">
+
+    </div>
+    <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+
+        {% if request.user.is_authenticated %}
+            <ul id="auth-info" class="navbar-nav navbar-right ml-auto">
+                <button class="btn btn-secondary" disabled>현재 사용자:</button>
+                <button id="username-header" type="button" class="btn btn-info"
+                        readonly="True">{{ request.user.first_name }}</button>
+                <button id="logout-btn" type="button" class="btn btn-danger">
+                    로그아웃
+                </button>
+            </ul>
+        {% else %}
+            <ul id="auth-info" class="navbar-nav navbar-right ml-auto">
+                <li>
+                    <a class="btn btn-danger btn-block" role="button" href="{% url 'social:begin' 'google-oauth2' %}">
+                        로그인</a>
+                    </a>
+                </li>
+            </ul>
+        {% endif %}
+
+    </div>
+</nav>
+
+<script>
+
+    $("#logout-btn").click(function () {
+        $.ajax({
+            url: '/account/logout/',
+            type: "GET",
+            async: false,
+            contentType: "application/json;charset=UTF-8;",
+
+            success: function (response) {
+                $("#alert-modal-message").text(response.message);
+
+                $("#alert-modal").modal({show: true});
+                window.location.href = '/';
+            },
+            error: function (response) {
+                const resMsg = JSON.parse(response.responseText).message;
+                $("#alert-modal-message").text(resMsg);
+                $("#alert-modal").modal('toggle');
+            }
+        });
+    })
+
+</script>

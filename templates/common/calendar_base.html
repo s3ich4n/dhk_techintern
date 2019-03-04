@@ -1,0 +1,59 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <title>AlertYo</title>
+    <link rel="icon" href="{% static 'image/account/favicon.ico' %}">
+    <meta charset='utf-8'/>
+    <!-- moment -->
+    <script src="{% static 'js/lib/moment.min.js' %}"></script>
+    <!-- jquery 3 -->
+    <script src="{% static 'js/lib/jquery.min.js' %}"></script>
+    <script src="{% static 'js/lib/jquery-ui.min.js' %}"></script>
+    <!-- full calendar -->
+    <link href="{% static 'css/fullcalendar.css' %}" rel='stylesheet'/>
+    <link href="{% static 'css/fullcalendar.print.css' %}" rel='stylesheet' media='print'/>
+    <script src="{% static 'js/fullcalendar.js' %}"></script>
+    <script src="{% static 'locale/ko.js' %}"></script>
+    <!-- jquery timepicker -->
+    <link href="{% static 'js/lib/jquery-timepicker/jquery.timepicker.min.css' %}" rel="stylesheet"/>
+    <script src="{% static 'js/lib/jquery-timepicker/jquery.timepicker.min.js' %}"></script>
+    <!-- fontawesome -->
+    <script defer src="{% static 'fontawesome/js/fontawesome-all.min.js' %}" data-auto-replace-svg=></script>
+    <!-- bootstrap 4 -->
+    <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <!-- app -->
+    <link href="{% static 'css/base.css' %}?v=1" rel='stylesheet'/>
+    <link href="{% static 'css/forecast.css' %}?v=1" rel='stylesheet'/>
+    <script src="{% static 'js/lib/form.js' %}"></script>
+    <script src="{% static 'js/lib/format.js' %}"></script>
+    <script src="{% static 'js/lib/authentication.min.js' %}"></script>
+    <script src="{% static 'js/schedule/event_update.js' %}"></script>
+    <script src="{% static 'js/schedule/event_create.js' %}?v=1"></script>
+    <script src="{% static 'js/schedule/event_delete.min.js' %}"></script>
+    <script src="{% static 'js/forecast/forecast_retreive.js' %}"></script>
+
+</head>
+
+<body>
+{% include 'schedule/calendar_index_header.html' %}
+{% block content %}
+{% endblock content %}
+{% include 'schedule/modals/create_modal.html' %}
+{% include 'schedule/modals/not_login_modal.html' %}
+{% include 'schedule/modals/detail_modal.html' %}
+{% include 'schedule/modals/delete_modal.html' %}
+{% include 'schedule/calendar_loaders.html' %}
+
+
+{% include 'account/modal/login_modal.html' %}
+{% include 'account/modal/signup_modal.html' %}
+
+
+{% block footer %}
+    {% include 'subscribe/footer/subscribe_footer.html' %}
+{% endblock footer %}
+
+</body>
+</html>

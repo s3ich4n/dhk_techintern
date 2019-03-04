@@ -1,0 +1,180 @@
+{% if user.is_authenticated %}
+
+<footer class="footer">
+    <div class="container form-inline justify-content-center">
+        <form method="POST" class="form-inline">
+            <div class="form-group mb-2" id="subscribe-prompt">
+                {% if is_subscribed %}
+                    <label for="current-email-input">현재 구독중인 메일계정
+                        <input type="email" class="form-control"
+                               id="current-email-input" value="{{ subscribing_email }}"
+                               size="32" readonly>
+                    </label>
+                    <button type="button" id="unsubscribe-btn" class="btn btn-danger">구독해지</button>
+                {% else %}
+                    <input type="email" class="form-control" id="subscribe-email-input"
+                           placeholder="이메일 주소를 입력하세요" size="32">
+                    <button type="button" id="subscribe-btn" class="btn btn-primary">구독하기</button>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</footer>
+
+{% endif %}
+
+<!-- 구독/구독해지 성공 모달 -->
+<div class="modal" id="when-succeed-modal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="subscribe-succeeded">구독 성공</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" id="succeeded-body-message">
+                AlertYo를 구독해 주셔서 감사합니다!
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 구독/구독해지 실패 에러모달 -->
+<div class="modal" id="when-failed-modal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">경고</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" id="subscribe-failed">
+                에러가 발생하였습니다.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 구독해지 확인 모달 -->
+<div class="modal" id="confirm-unsubscribe-modal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                정말로 구독을 해지 하시겠습니까?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger"
+                        id="confirm-unsubscribe-btn" data-dismiss="modal">구독해지
+                </button>
+                <button type="button" class="btn" data-dismiss="modal">취소</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const ENTER_PRESSED = 13;
+
+    $(document).on('click', '#subscribe-btn', function (event) {
+        event.preventDefault();
+        subscribe_email_checker();
+    });
+
+    $(document).on('click', '#unsubscribe-btn', function (event) {
+        event.preventDefault();
+        $('#confirm-unsubscribe-modal').modal('show');
+    });
+
+    $(document).on('click', '#confirm-unsubscribe-btn', function (event) {
+        event.preventDefault();
+        unsubscribe_email_checker();
+    });
+
+    $('#subscribe-prompt').keypress(function (event) {
+        if (event.which === ENTER_PRESSED) {
+            event.preventDefault();
+            subscribe_email_checker();
+        }
+    });
+
+    $('#when-succeed-modal').on('hide.bs.modal', function () {
+        location.reload();
+    });
+
+    function subscribe_email_checker() {
+        const emailAddress = $('#subscribe-email-input');
+        console.log(emailAddress);
+
+        $.ajax({
+            url : '{% url 'subscribe:email-subscribe' %}',
+            type: 'POST',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+            },
+            data: {
+                email: emailAddress.val(),
+            },
+
+            success : function(data, textStatus) {
+
+                $('#subscribe-succeeded').html('구독 성공');
+                $('#subscribe-succeeded-body').html('AlertYo를 구독해 주셔서 감사합니다!');
+                $('#when-succeed-modal').modal('show');
+                $('#subscribe-email-input').val('');
+                $('.btn-danger').on('click', function (event) {
+                    event.preventDefault();
+                    location.reload();
+                });
+            },
+
+            error : function(jqXHR, textStatus, errorThrown) {
+
+                if (errorThrown.localeCompare('Conflict') === 0) {
+                    $('#subscribe-failed').html('해당 계정은 이미 구독되어있습니다.');
+                    $('#when-failed-modal').modal('show');
+                }
+
+                else if (errorThrown.localeCompare('Bad Request') === 0) {
+                    $('#subscribe-failed').html('올바른 이메일 주소를 입력하시지 않으셨습니다.');
+                    $('#when-failed-modal').modal('show');
+                }
+
+                else {
+                    $('#when-failed-modal').modal('show');
+                }
+
+                $('#subscribe-email-input').val('');
+
+            }
+        });
+    }
+
+    function unsubscribe_email_checker() {
+        $.ajax({
+            url: '{% url 'subscribe:email-subscribe' %}',
+            type: 'DELETE',
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+            },
+            success: function (data) {
+                $('#subscribe-succeeded').html('구독해지 성공');
+                $('#succeeded-body-message').html('그동안 AlertYo를 구독해 주셔서 감사합니다.');
+                $('#when-succeed-modal').modal('show');
+            },
+
+            error: function (data) {
+                $('#subscribe-failed').html('구독해지 실패');
+                $('#failed-body-message').html('구독해지에 실패하였습니다.');
+                $('#when-failed-modal').modal('show');
+            }
+        });
+    }
+
+</script>

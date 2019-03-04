@@ -1,0 +1,42 @@
+[
+  {
+    "model": "forecast.region",
+    "pk": 1,
+    "fields": {
+      "name": "\uc11c\uc6b8",
+      "latitude": 37.5666791,
+      "longitude": 126.9782914,
+      "observing_station": 108
+    }
+  },
+  {
+    "model": "forecast.region",
+    "pk": 2,
+    "fields": {
+      "name": "\ub300\uc804",
+      "latitude": 36.3496963,
+      "longitude": 127.384902,
+      "observing_station": 133
+    }
+  },
+  {
+    "model": "forecast.region",
+    "pk": 3,
+    "fields": {
+      "name": "\ub300\uad6c",
+      "latitude": 35.8494916,
+      "longitude": 128.5599518,
+      "observing_station": 143
+    }
+  },
+  {
+    "model": "forecast.region",
+    "pk": 4,
+    "fields": {
+      "name": "\ubd80\uc0b0",
+      "latitude": 35.1799528,
+      "longitude": 129.0752365,
+      "observing_station": 159
+    }
+  }
+]

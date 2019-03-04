@@ -1,0 +1,150 @@
+{% load static %}
+<div id="signup-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="login-modal-label"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="col-md-6 text-center">
+                    <h3>회원가입</h3>
+                </div>
+            </div>
+            <div class="modal-body">
+                <form role="form">
+                    <div class="form-group ">
+                        <label for="input-username">사내 계정 (로그인시 id에 해당)</label>
+                        <div class="input-group-append">
+                            <input id="signup-username" type="text" class="form-control" required="true"
+                                   placeholder="인증메일을 받아야합니다. 필수입력"
+                                   aria-label="Recipient's username" aria-describedby="basic-addon2">
+
+                            <span class="input-group-text inputGroup-sizing-sm alert-danger"
+                                  id="basic-addon2">{{ DOMAIN }}</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="input-first_name">이름</label>
+                        <input id="signup-first_name" type="text" class="form-control" id="inputName"
+                               placeholder="이름을 입력해 주세요">
+                    </div>
+                    <div class="form-group">
+                        <label for="input-password">비밀번호</label>
+                        <input id="signup-password" type="password" class="form-control"
+                               pattern="(?=.*[a-z]).{8,}"
+                               placeholder="최소 8자이상 특수문자 1개 포함해야합니다.">
+                    </div>
+                    <div class="form-group">
+                        <label for="input-retype_password">비밀번호 확인</label>
+                        <input id="signup-retype_password" type="password" class="form-control"
+                               placeholder="비밀번호 확인을 위해 다시한번 입력 해 주세요">
+                    </div>
+
+                    <div class="form-group">
+                        <label>push 확인</label>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="customCheck1" required="True">
+                            <label class="custom-control-label" for="customCheck1">
+                                사내 계정으로 가입된 slack또는 email에 서버트레픽 일정에 대한 푸쉬 있을 수 있습니다.
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer form-group text-center">
+                        <button type="button" id="signup-submit-btn" class="btn btn-primary">
+                            회원가입 <i class="fa fa-check spaceLeft"></i>
+                        </button>
+                        <button type="submit" class="btn btn-danger" data-dismiss="modal">
+                            취소 <i class="fa fa-times spaceLeft"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="alert-modal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <!-- header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">요청 정보</h4>
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                </div>
+                <!-- body -->
+                <div class="modal-body">
+                    <p4 id="alert-modal-message"></p4>
+                </div>
+                <!-- Footer -->
+                <div class="modal-footer">
+                    <button type="button" id="modal-close-and-refresh"
+                            class="btn btn-default btn-danger" data-dismiss="modal">닫기
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    function showFormErrorMessageSignUp(xhr) {
+        /* 폼 유효성 검사에 통과되지 못할 때 에러메세지를 각 input 아래에 띄움. */
+        $(".error_msg").remove();
+
+        const response = JSON.parse(xhr.responseText);
+        const form_error = JSON.parse(response['error']);
+        const form_error_fields = Object.getOwnPropertyNames(form_error);
+
+        for (let idx in form_error_fields) {
+            let field = form_error_fields[idx];
+            let field_id = ['#signup-', field].join('');
+            for (let field_idx in form_error[field]) {
+                let err_element = getElement('p', {
+                    klass: 'error_msg',
+                });
+                err_element.append(form_error[field][field_idx]["message"]);
+                $(field_id).parent().append(err_element);
+            }
+
+        }
+    }
+
+
+    $("#signup-submit-btn").click(function () {
+        const username = $("#signup-username");
+        const password = $("#signup-password");
+        const retype_password = $("#signup-retype_password");
+        const firstName = $("#signup-first_name");
+
+
+        $.ajax({
+            url: '/account/users/',
+            type: "POST",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+            },
+            cache: false,
+            contentType: "application/json;charset=UTF-8;",
+            dataType: "json",
+            data: JSON.stringify({
+                "username": username.val(),
+                "password": password.val(),
+                "retype_password": retype_password.val(),
+                "email": username.val() + '@' + COMPANY_DOMAIN,
+                "first_name": firstName.val(),
+            }),
+            success: function (response) {
+                $("#alert-modal-message").text(response.message);
+                $("#signup-modal").modal('hide');
+                $("#alert-modal").modal('toggle');
+            },
+            error: function (xhr) {
+                if (xhr.status === 400) {
+                    console.log(xhr)
+                    showFormErrorMessageSignUp(xhr);
+                }
+            }
+        });
+
+
+    })
+</script>

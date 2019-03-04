@@ -1,0 +1,116 @@
+<!-- fullCalendar initialize관련 소스코드 -->
+<script>
+
+    $(document).ready(function () {
+        /* initialize the calendar
+        -----------------------------------------------------------------*/
+        $('#calendar').fullCalendar({
+            events: function (start, end, timezone, callback) {
+                $.ajax({
+                    url: '{% url 'schedule:api-retrieve-monthly-value' %}',
+                    type: 'GET',
+                    data: {
+                        start: moment(start).format(DATE_FORMAT),
+                        end: moment(end).format(DATE_FORMAT)
+                    },
+                    success: function (data) {
+                        if (data instanceof Array) {
+                            for (let i in data) {
+                                data[i].className = data[i].category === '사내' ? 'fc-event-internal' : 'fc-event-external';
+                                data[i].allDay = data[i].is_allday;
+                            }
+                            callback(data);
+                        } else {
+                            callback([])
+                        }
+
+                    },
+                 });
+                $.ajax({
+                    url: '{% url 'forecast:retrieve-forecasts' %}',
+                    type: 'GET',
+                    data: {
+                        start: moment(start).format(DATE_FORMAT),
+                        end: moment(end).format(DATE_FORMAT)
+                    },
+                    success: function (data) {
+                        if (data instanceof Array) {
+                            for (let element of data) {
+                                let elementDate = moment(element.date, DATE_FORMAT);
+                                if (elementDate <= moment()) {
+                                    const dateSquareByMonth = $(".fc-day-top[data-date=" + element.date + "]");
+                                    dateSquareByMonth.append(getFullyAttachedBtn(dateSquareByMonth, element));
+
+                                    const tooltipDoms = $('[data-toggle="tooltip"]');
+                                    tooltipDoms.tooltip();
+                                    setTooltipCSS(tooltipDoms)
+                                }
+                            }
+                        }
+                    },
+                });
+            },
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay'
+            },
+
+            editable: true,
+            droppable: true, // this allows things to be dropped onto the calendar
+            timezone: 'local',
+            scrollTime: '09:00:00',
+            drop: function () {
+                // is the "remove after drop" checkbox checked?
+                if ($('#drop-remove').is(':checked')) {
+                    // if so, remove the element from the "Draggable Events" list
+                    $(this).remove();
+                }
+            },
+
+            dayClick: function (date) {
+                {% if user.is_authenticated %}
+                    initCreateModal(date);
+                {% else %}
+                    $('#not-logined').modal('show');
+                {% endif %}
+            },
+
+            eventClick: function (calEvent, element) {
+                toggleModalFooter(false);
+                $.ajax({
+                    url: '/schedule/events/' + calEvent.id + '/',
+                    success: function (event) {
+
+                        calEvent.title = event.title;
+                        calEvent.category = event.category;
+                        calEvent.description = event.description;
+                        calEvent.start = event.start;
+                        calEvent.end = event.end;
+                        calEvent.author = event.author;
+                        calEvent.is_allday = event.is_allday;
+
+                        $('#calendar').fullCalendar('updateEvent', calEvent);
+                        $('#event_title').html(calEvent.title);
+                        $('#event_category').html(calEvent.category);
+                        $('#event_description').html(event.description);
+                        $('#event_start_at').html(moment(calEvent.start).format(TIME_FORMAT_FOR_UI));
+                        $('#event_end_at').html(moment(calEvent.end).format(TIME_FORMAT_FOR_UI));
+                        $('#event_author').html(event.author);
+                        $('#event_id').val(calEvent.id);
+                        $('#event_is_allday_cell').html(getCheckboxElement(calEvent.is_allday, true, {
+                                id: 'event_is_allday',
+                                klass: 'form-check-input position-static',
+                            })
+                        );
+
+                        $('#modal_detail_show').modal({
+                            backdrop: 'static',
+                            keyboard: false,
+                        });
+                    }
+                })
+            },
+        });
+    });
+</script>

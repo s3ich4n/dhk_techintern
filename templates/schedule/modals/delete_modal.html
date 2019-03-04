@@ -1,0 +1,51 @@
+<!-- 삭제 성공 모달 -->
+<div class="modal fade" id="delete_success_modal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <!-- header -->
+            <div class="modal-header">
+                <h4 class="modal-title">요청 정보</h4>
+                <button type="button" class="close" data-dismiss="modal">×</button>
+            </div>
+            <!-- body -->
+            <div class="modal-body">
+                <p4>정상적으로 요청이 처리되었습니다.</p4>
+            </div>
+            <!-- Footer -->
+            <div class="modal-footer">
+                <button type="button" id="modal-close-and-refresh"
+                        class="btn btn-secondary" data-dismiss="modal">닫기
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 삭제 실패 모달 -->
+<div class="modal fade" id="fail_modal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <!-- header -->
+            <div class="modal-header">
+                <h4 class="modal-title">요청 정보</h4>
+            </div>
+            <!-- body -->
+            <div id="fail_modal_body" class="modal-body">
+                이미 일정이 종료된 이벤트는 수정 또는 삭제할 수 없습니다.
+            </div>
+            <!-- Footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('#event_delete_btn').on("click", function (event) {
+        requestDeleteEvent(event);
+    });
+    $('#modal-close-and-refresh').click(function () {
+        location.reload();
+    });
+</script>

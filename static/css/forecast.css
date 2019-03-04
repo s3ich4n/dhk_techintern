@@ -1,0 +1,20 @@
+.weather-content {
+    color: black;
+    font-size: 14px;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+.weather-icon {
+    width: 22px;
+    height: 22px;
+    vertical-align: center;
+    margin: 1px;
+}
+
+.forecast-tooltip-btn {
+    background-color: rgba(0, 0, 0, 0);
+    color: black;
+    border: none;
+    cursor: pointer;
+}

@@ -1,0 +1,8 @@
+{
+  "normal_user_permissions": [
+    "view_event",
+    "add_event",
+    "change_event",
+    "delete_event"
+  ]
+}

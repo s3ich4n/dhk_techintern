@@ -1,0 +1,21 @@
+{% extends "common/calendar_base.html" %}
+
+{% block content %}
+
+    {% if not request.user.is_authenticated %}
+        <div id="unauthorized-alert" class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>인증</strong> 되지 않은 회원은 일정을 확인할수 없습니다
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    {% endif %}
+
+    <div class="container">
+        <div id="calendar"></div>
+    </div>
+
+{% endblock content %}
+
+{% block detail_modal %}
+{% endblock detail_modal %}

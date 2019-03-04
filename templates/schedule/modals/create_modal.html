@@ -1,0 +1,88 @@
+<div id="modal-create" class="modal fade">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">일정 입력</h2>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form role="form" method="POST" action="/schedule/events/">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label class="control-label">제목</label>
+                        <div>
+                            <input type="text" class="form-control input-lg" name="title" value=""
+                                   placeholder="이벤트 제목">
+                        </div>
+                        <small class="form-text text-danger title-invalid"></small>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label class="control-label" for="category">분류</label>
+                            <div>
+                                <select name="category" class="form-control" id="category">
+                                    <option value="사내" selected>사내</option>
+                                    <option value="사외">사외</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label class="control-label">작성자</label>
+                            <div>
+                                <input id="event-create-input-author" type="text" class="form-control input-lg"
+                                       name="author" disabled>
+                            </div>
+                            <small class="form-text text-danger author-invalid"></small>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">설명</label>
+                        <div>
+                            <input type="text" class="form-control input-lg" name="description">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">이벤트 일정</label>
+                        <div class="form-check form-check-inline float-right">
+                            <input type="checkbox" class="form-check-input" id="all-day">
+                            <label class="form-check-label" for="all-day">하루종일</label>
+                        </div>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">시작</span>
+                            </div>
+                            <input id="start-date" type="date" class="form-control input-lg" name="start-at">
+                            <input id="start-time" type="time" class="form-control input-lg" name="start-at-time">
+                            <div class="input-group-append">
+                                <Button class="btn btn-info input-group-addon" type="button" id="start-time-picker">
+                                    <i class="fas fa-clock"></i>
+                                </Button>
+                            </div>
+                        </div>
+                        <small class="form-text text-danger start_at-invalid"></small>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">종료</span>
+                            </div>
+                            <input id="end-date" type="date" class="form-control input-lg-6" name="end-at">
+                            <input id="end-time" type="time" class="form-control input-lg-6" name="end-at-time">
+                            <div class="input-group-append">
+                                <Button class="btn btn-info input-group-addon" type="button" id="end-time-picker">
+                                    <i class="fas fa-clock"></i>
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="float-right">
+                            <button type="submit" id="create_submit_button" class="btn btn-primary btn-submit">일정 등록</button>
+                            <button type="button" id="create_cancel_button" class="btn btn-secondary btn-close" data-dismiss="modal">취소</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
