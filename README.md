@@ -4,7 +4,7 @@
 
 ## 1. How to start project
 ### 1-1. 가상환경 설치
-  ``
+ 
   ~~~
   $ python3 -m venv Alertyo 
   $ pip install -r requirements.txt
@@ -14,7 +14,6 @@
   PyCharm -> preference -> Project AlertYo -> python interpreter -> show all -> (+)click -> ok
   $ pip install -r requirements.txt
   ~~~
-<br>
 
  requirements.txt 에서 install 할때  django-admin 설치 실패 하는 문제가 간혹 발생할 수 있음
  ~~~
