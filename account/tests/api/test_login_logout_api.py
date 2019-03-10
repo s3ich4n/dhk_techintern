@@ -9,7 +9,7 @@ class LoginLogoutTestCase(TestCase):
     fixtures = ['user.json', ]
 
     def setUp(self):
-        self.username = 'sky5367'
+        self.username = 'testuser'
         self.password = 'django_password'
         User.objects.filter(username=self.username).delete()
         User.objects.create_user(username=self.username, password=self.password, email='')
